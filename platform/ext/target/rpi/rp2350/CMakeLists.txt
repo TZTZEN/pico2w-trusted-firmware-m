@@ -187,6 +187,8 @@ target_sources(platform_s
 
         rpi_trng.c
 
+        "${PLATFORM_DIR}/ext/common/tfm_hal_sp_logdev_periph.c"
+
         $<$<NOT:$<BOOL:${PLATFORM_DEFAULT_ATTEST_HAL}>>:${CMAKE_CURRENT_SOURCE_DIR}/attest_hal.c>
         $<$<OR:$<BOOL:${TFM_S_REG_TEST}>,$<BOOL:${TFM_NS_REG_TEST}>>:${CMAKE_CURRENT_SOURCE_DIR}/plat_test.c>
         $<$<BOOL:${TFM_PARTITION_PLATFORM}>:${CMAKE_CURRENT_SOURCE_DIR}/services/src/tfm_platform_system.c>
