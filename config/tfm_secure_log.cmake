@@ -5,20 +5,15 @@
 #
 #-------------------------------------------------------------------------------
 
-set(TFM_SPM_LOG_LEVEL           LOG_LEVEL_NONE   CACHE STRING    "Set default SPM log level as INFO level")
-set(TFM_PARTITION_LOG_LEVEL     LOG_LEVEL_NONE   CACHE STRING    "Set default Secure Partition log level as INFO level")
+# Force LOG functionality to be enabled regardless of test configuration AND build type
+# This ensures UART output works even when regression tests are disabled
+# Use FORCE to override build type settings like MinSizeRel that set LOG_LEVEL_NONE
+set(TFM_SPM_LOG_LEVEL           LOG_LEVEL_INFO   CACHE STRING    "Set default SPM log level as INFO level" FORCE)
+set(TFM_PARTITION_LOG_LEVEL     LOG_LEVEL_INFO   CACHE STRING    "Set default Secure Partition log level as INFO level" FORCE)
 
-# Secure regression tests also require SP log function
-# Enable SP log raw dump when SP log level is higher than silence or TF-M
-# regression test is enabled.
-if ((NOT ${TFM_PARTITION_LOG_LEVEL} STREQUAL LOG_LEVEL_NONE)
-    OR TFM_S_REG_TEST OR TFM_NS_REG_TEST)
-    set(TFM_SP_LOG_RAW_ENABLED ON)
-endif()
+# LOG functionality must remain available regardless of test configuration
+# Original test dependency has been removed to fix UART output issues when TEST_S=OFF
+set(TFM_SP_LOG_RAW_ENABLED ON CACHE BOOL "SP log functionality always enabled" FORCE)
 
-# SP log relies on SPM log.
-# Enable SPM log when SPM log level is higher than silence or SP log is active.
-if ((NOT ${TFM_SPM_LOG_LEVEL} STREQUAL LOG_LEVEL_NONE)
-    OR TFM_SP_LOG_RAW_ENABLED)
-    set(TFM_SPM_LOG_RAW_ENABLED ON)
-endif()
+# SPM log depends on SP log being available
+set(TFM_SPM_LOG_RAW_ENABLED ON CACHE BOOL "SPM log functionality always enabled" FORCE)
